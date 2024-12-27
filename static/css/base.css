@@ -5,26 +5,64 @@ html {
 body {
     background: url('/media/refurbean-welcome-page.jpg') no-repeat center center fixed;
     background-size: cover;
-    height: calc(100vh - 164px);
+    height: 100%;
     color: #555;
     font-family: 'Electrolize';
+    padding-top: 164px;
 }
 
-.base-header{
-    z-index: 9999999;
-    background-color:#fff;
+.base-header {
+    z-index: 9999;
+    background-color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
 }
 
-.tagline{
+.tagline {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     color: white;
     text-shadow: 
         2px 2px 0px black,  
         -2px -2px 0px black,
         2px -2px 0px black,
         -2px 2px 0px black;
+    font-size: 2rem;
+    text-align: center;
+    z-index: 1000;
 }
 
-/* from Bulma */
+.index-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    height: calc(100% - 164px);
+    padding: 20px;
+}
+
+.shop-now-button {
+    background: black;
+    color: white;
+    min-width: 260px;
+    margin-top: 20px;
+}
+
+.shop-now-button:hover,
+.shop-now-button:active,
+.shop-now-button:focus,
+.btn-black:hover,
+.btn-black:active,
+.btn-black:focus {
+    background: #222;
+    color: white;
+}
+
 .icon {
     align-items: center;
     display: inline-flex;
@@ -41,24 +79,8 @@ body {
     width: fit-content;
 }
 
-.shop-now-button {
-    background: black;
-    color: white;
-    min-width: 260px;
-}
-
 .btn-black {
     background: black;
-    color: white;
-}
-
-.shop-now-button:hover,
-.shop-now-button:active,
-.shop-now-button:focus,
-.btn-black:hover,
-.btn-black:active,
-.btn-black:focus {
-    background: #222;
     color: white;
 }
 
@@ -70,26 +92,44 @@ body {
     border: 1px solid black !important;
 }
 
-/* -------------------------------- Media Queries */
+.bg-black {
+    background: #000 !important;
+}
 
-/* Slightly larger container on xl screens */
 @media (min-width: 1200px) {
   .container {
     max-width: 80%;
   }
 }
 
-/* fixed top navbar only on medium and up */
 @media (min-width: 992px) {
-    .fixed-top-desktop-only {
-        position: fixed;
-        top: 0;
-        right: 0;
-        left: 0;
-        z-index: 1030;
+    body {
+        padding-top: 164px;
     }
 
     .header-container {
         padding-top: 164px;
+    }
+}
+
+@media (max-width: 991px) {
+    body {
+        padding-top: 100px;
+    }
+
+    .header-container {
+        padding-top: 100px;
+    }
+
+    .index-content {
+        height: calc(100% - 100px);
+    }
+
+    .tagline {
+        font-size: 1.5rem;
+    }
+
+    .shop-now-button {
+        min-width: 220px;
     }
 }
