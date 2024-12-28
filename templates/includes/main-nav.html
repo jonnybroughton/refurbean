@@ -17,11 +17,11 @@
                 Computers
             </a>
             <div class="dropdown-menu border-0" aria-labelledby="computers-link">
-                <a href="" class="dropdown-item">Windows Desktops</a>
-                <a href="" class="dropdown-item">Windows Laptops</a>
-                <a href="" class="dropdown-item">Apple Desktops</a>
-                <a href="" class="dropdown-item">Apple Laptops</a>
-                <a href="" class="dropdown-item">All Computers</a>
+                <a href="{% url 'products' %}?category=windows_desktop" class="dropdown-item">Windows Desktops</a>
+                <a href="{% url 'products' %}?category=windows_laptop" class="dropdown-item">Windows Laptops</a>
+                <a href="{% url 'products' %}?category=apple_desktop" class="dropdown-item">Apple Desktops</a>
+                <a href="{% url 'products' %}?category=apple_laptop" class="dropdown-item">Apple Laptops</a>
+                <a href="{% url 'products' %}?device_type=computers" class="dropdown-item">All Computers</a>
             </div>
         </li>
         <li class="nav-item dropdown">
@@ -29,9 +29,9 @@
                 Phones
             </a>
             <div class="dropdown-menu border-0" aria-labelledby="phones-link">
-                <a href="" class="dropdown-item">iPhones</a>
-                <a href="" class="dropdown-item">Android Phones</a>
-                <a href="" class="dropdown-item">All Phones</a>
+                <a href="{% url 'products' %}?category=apple_iphone" class="dropdown-item">iPhones</a>
+                <a href="{% url 'products' %}?category=android_phone" class="dropdown-item">Android Phones</a>
+                <a href="{% url 'products' %}?device_type=phones" class="dropdown-item">All Phones</a>
             </div>
         </li>
         <li class="nav-item dropdown">
@@ -39,20 +39,9 @@
                 Tablets
             </a>
             <div class="dropdown-menu border-0" aria-labelledby="tablets-link">
-                <a href="" class="dropdown-item">iPads</a>
-                <a href="" class="dropdown-item">Android Tablets</a>
-                <a href="" class="dropdown-item">All tabletss</a>
-            </div>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="logo-font font-weight-bold nav-link text-black" href="#" id="specials-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Special Offers
-            </a>
-            <div class="dropdown-menu border-0" aria-labelledby="specials-link">
-                <a href="" class="dropdown-item">New Arrivals</a>
-                <a href="" class="dropdown-item">Deals</a>
-                <a href="" class="dropdown-item">Clearance</a>
-                <a href="" class="dropdown-item">All Specials</a>
+                <a href="{% url 'products' %}?category=apple_ipad" class="dropdown-item">iPads</a>
+                <a href="{% url 'products' %}?category=android_tablet" class="dropdown-item">Android Tablets</a>
+                <a href="{% url 'products' %}?device_type=tablets" class="dropdown-item">All tabletss</a>
             </div>
         </li>
     </ul>
