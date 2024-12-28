@@ -1,61 +1,55 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib import messages
 from django.db.models import Q
-from .models import Product, DeviceType  # Import the DeviceType model
+from .models import Product, Category, DeviceType  
 
-# Create your views here.
 
 def all_products(request):
-    """ A view to show all products, including sorting and search queries """
+    """ A view to show all products, including sorting and filtering """
 
     products = Product.objects.all()
     query = None
-    category_filter = None  
-    device_type_filter = None 
+    category_filter = None
+    device_type_filter = None
     sort = None
-    direction = None
 
     if request.GET:
         if 'sort' in request.GET:
             sortkey = request.GET['sort']
-            sort = sortkey
-            if sortkey == 'name':
-                sortkey = 'lower_name'
-                products = products.annotate(lower_name=Lower('name'))
+            if sortkey == 'name_asc':
+                sortkey = 'name'
+            elif sortkey == 'name_desc':
+                sortkey = '-name'
+            elif sortkey == 'price_asc':
+                sortkey = 'price'
+            elif sortkey == 'price_desc':
+                sortkey = '-price'
+            elif sortkey == 'rating_asc':
+                sortkey = 'rating'
+            elif sortkey == 'rating_desc':
+                sortkey = '-rating'
 
-            if 'direction' in request.GET:
-                direction = request.GET['direction']
-                if direction == 'desc':
-                    sortkey = f'-{sortkey}'
+            sort = request.GET['sort']
             products = products.order_by(sortkey)
 
-   
-    if request.GET.get('q'):
-        query = request.GET['q']
-        if query:
-            queries = Q(name__icontains=query) | Q(description__icontains=query)
-            products = products.filter(queries)
-        else:
-            messages.error(request, "You didn't enter any search criteria!")
 
-    
-    if request.GET.get('category'):
-        category_filter = request.GET['category']
-        products = products.filter(category__name=category_filter)
+        if 'category' in request.GET:
+            category_filter = request.GET['category']
+            products = products.filter(category__name=category_filter)
 
-    
-    if request.GET.get('device_type'):
-        device_type_filter = request.GET['device_type']
-        products = products.filter(device_type__name=device_type_filter)
+        if 'device_type' in request.GET:
+            device_type_filter = request.GET['device_type']
+            products = products.filter(device_type__name=device_type_filter)
 
-    current_sorting = f'{sort}_{direction}'
+    categories = Category.objects.all()
 
     context = {
         'products': products,
         'search_term': query,
+        'categories': categories,
+        'current_sorting': sort,
         'category_filter': category_filter,
-        'device_type_filter': device_type_filter,  
-        'current_sorting': current_sorting,
+        'device_type_filter': device_type_filter,
     }
 
     return render(request, 'products/products.html', context)
