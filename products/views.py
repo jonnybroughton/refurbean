@@ -10,10 +10,26 @@ def all_products(request):
 
     products = Product.objects.all()
     query = None
-    category_filter = None  # To store the selected category
-    device_type_filter = None  # To store the selected device type
+    category_filter = None  
+    device_type_filter = None 
+    sort = None
+    direction = None
 
-    # Search functionality
+    if request.GET:
+        if 'sort' in request.GET:
+            sortkey = request.GET['sort']
+            sort = sortkey
+            if sortkey == 'name':
+                sortkey = 'lower_name'
+                products = products.annotate(lower_name=Lower('name'))
+
+            if 'direction' in request.GET:
+                direction = request.GET['direction']
+                if direction == 'desc':
+                    sortkey = f'-{sortkey}'
+            products = products.order_by(sortkey)
+
+   
     if request.GET.get('q'):
         query = request.GET['q']
         if query:
@@ -22,21 +38,24 @@ def all_products(request):
         else:
             messages.error(request, "You didn't enter any search criteria!")
 
-    # Category filtering
+    
     if request.GET.get('category'):
         category_filter = request.GET['category']
         products = products.filter(category__name=category_filter)
 
-    # Device Type filtering
+    
     if request.GET.get('device_type'):
         device_type_filter = request.GET['device_type']
         products = products.filter(device_type__name=device_type_filter)
+
+    current_sorting = f'{sort}_{direction}'
 
     context = {
         'products': products,
         'search_term': query,
         'category_filter': category_filter,
-        'device_type_filter': device_type_filter,  # To show which device type is selected
+        'device_type_filter': device_type_filter,  
+        'current_sorting': current_sorting,
     }
 
     return render(request, 'products/products.html', context)
