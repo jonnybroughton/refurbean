@@ -33,7 +33,6 @@ body {
         -2px 2px 0px black;
     font-size: 2rem;
     text-align: center;
-    z-index: 1000;
 }
 
 .icon {
@@ -84,6 +83,22 @@ body {
 
 .bg-black {
     background: #000 !important;
+}
+
+.overlay {
+	height: 100%;
+	width: 100%;
+	top: 0;
+	left: 0;
+	position: fixed;
+	background: white;
+	z-index: -1;
+}
+
+.product-image {
+    width: 243px;
+    height: 243px;
+    object-fit: cover;
 }
 
 /* -------------------------------- Media Queries */
