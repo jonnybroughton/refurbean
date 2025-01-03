@@ -10,10 +10,15 @@ def all_products(request):
     """ A view to show all products, including sorting and filtering """
 
     products = Product.objects.all()
-    query = None
+    query = request.GET.get('q', None)
     category_filter = None
     device_type_filter = None
     sort = None
+
+    if query:
+        products = products.filter(
+            Q(name__icontains=query) | Q(description__icontains=query)
+        )
 
     if request.GET:
         if 'sort' in request.GET:
@@ -34,7 +39,6 @@ def all_products(request):
             sort = request.GET['sort']
             products = products.order_by(sortkey)
 
-
         if 'category' in request.GET:
             category_filter = request.GET['category']
             products = products.filter(category__name=category_filter)
@@ -47,7 +51,7 @@ def all_products(request):
 
     context = {
         'products': products,
-        'search_term': query,
+        'search_term': query, 
         'categories': categories,
         'current_sorting': sort,
         'category_filter': category_filter,
@@ -73,9 +77,9 @@ def add_product(request):
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            product = form.save()
             messages.success(request, 'Successfully added product!')
-            return redirect(reverse('add_product'))
+            return redirect(reverse('product_detail', args=[product.id]))
         else:
             messages.error(request, 'Failed to add product. Please ensure the form is valid.')
     else:
@@ -110,3 +114,10 @@ def edit_product(request, product_id):
     }
 
     return render(request, template, context)
+
+def delete_product(request, product_id):
+    """ Delete a product from the store """
+    product = get_object_or_404(Product, pk=product_id)
+    product.delete()
+    messages.success(request, 'Product deleted!')
+    return redirect(reverse('products'))
