@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-*_mki2@v*zvb)#s_gzv@%$7oy-0s-c7+xa_mqefhw864nvwi8n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://refurbean-209da5da9139.herokuapp.com/','localhost']
+ALLOWED_HOSTS = ['refurbean-209da5da9139.herokuapp.com/','localhost']
 CSRF_TRUSTED_ORIGINS = [
     'https://8000-jonnybroughto-refurbean-0e3zqyg9gq0.ws.codeinstitute-ide.net',
 ]
