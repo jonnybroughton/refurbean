@@ -28,7 +28,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', '')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'DEVELOPMENT' in os.environ
 
-ALLOWED_HOSTS = ['refurbean-209da5da9139.herokuapp.com','localhost']
+ALLOWED_HOSTS = ['refurbean-209da5da9139.herokuapp.com','localhost',]
 CSRF_TRUSTED_ORIGINS = [
     'https://8000-jonnybroughto-refurbean-0e3zqyg9gq0.ws.codeinstitute-ide.net',
 ]
