@@ -1,1 +1,1 @@
-web: gunicorn refurbean.wsgi.application
+web: gunicorn refurbean.wsgi:application
