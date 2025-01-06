@@ -150,6 +150,20 @@ a.category-badge > span.badge:hover {
     margin-top: 50px;
 }
 
+
+@media (max-width: 768px) {
+    .not-found-message {
+        font-size: 10vw;
+    }
+}
+
+
+@media (max-width: 480px) {
+    .not-found-message {
+        font-size: 12vw;  
+    }
+}
+
 /* ------------------------------- bootstrap toasts */
 
 .message-container {
