@@ -44,5 +44,16 @@
                 <a href="{% url 'products' %}?device_type=tablets" class="dropdown-item">All tablets</a>
             </div>
         </li>
+        <li class="nav-item dropdown">
+            <a class="logo-font font-weight-bold nav-link text-black mr-5" href="#" id="tablets-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Gaming Consoles
+            </a>
+            <div class="dropdown-menu border-0" aria-labelledby="tablets-link">
+                <a href="{% url 'products' %}?category=nintendo_console" class="dropdown-item">Nintendo Consoles</a>
+                <a href="{% url 'products' %}?category=playstation_console" class="dropdown-item">PlayStation Consoles</a>
+                <a href="{% url 'products' %}?category=xbox_console" class="dropdown-item">Xbox Consoles</a>
+                <a href="{% url 'products' %}?device_type=consoles" class="dropdown-item">All Gaming Consoles</a>
+            </div>
+        </li>
     </ul>
 </div>
