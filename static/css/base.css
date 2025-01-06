@@ -134,6 +134,17 @@ a.category-badge > span.badge:hover {
     cursor: pointer;
 }
 
+/* 404 CSS */
+
+.not-found-message {
+    font-size: 8vw;  
+    font-weight: bold;
+    color: #000;
+    text-shadow: 0 0 5px white, 0 0 10px white, 0 0 15px white; 
+    text-align: center;
+    line-height: 1.2;
+}
+
 /* ------------------------------- bootstrap toasts */
 
 .message-container {
@@ -308,3 +319,6 @@ a.category-badge > span.badge:hover {
         padding-top: 164px;
     }
 }
+
+
+
