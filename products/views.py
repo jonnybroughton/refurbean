@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
-from .forms import ProductForm
-from .models import Product, Category, DeviceType  
+from .forms import ProductForm, ReviewForm
+from .models import Product, Category, DeviceType, Review
 
 
 def all_products(request):
@@ -72,6 +72,7 @@ def product_detail(request, product_id):
 
     return render(request, 'products/product_detail.html', context)
 
+
 @login_required
 def add_product(request):
     """ Add a product to the store """
@@ -97,6 +98,7 @@ def add_product(request):
     }
 
     return render(request, template, context)
+
 
 @login_required
 def edit_product(request, product_id):
@@ -127,6 +129,7 @@ def edit_product(request, product_id):
 
     return render(request, template, context)
 
+
 @login_required
 def delete_product(request, product_id):
     """ Delete a product from the store """
@@ -139,3 +142,66 @@ def delete_product(request, product_id):
     product.delete()
     messages.success(request, 'Product deleted!')
     return redirect(reverse('products'))
+
+
+@login_required
+def add_review(request, product_id):
+    """Add a review for a product"""
+    product = get_object_or_404(Product, pk=product_id)
+
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        rating = int(request.POST.get('rating'))
+        
+        if not 1 <= rating <= 5:
+            messages.error(request, "Rating must be between 1 and 5.")
+            return redirect(reverse('product_detail', args=[product_id]))
+
+        review, created = Review.objects.update_or_create(
+            product=product,
+            user=request.user,
+            defaults={'title': title, 'content': content, 'rating': rating}
+        )
+
+        product.save()  # Recalculate the product's rating
+        messages.success(request, "Your review has been saved.")
+        return redirect(reverse('product_detail', args=[product_id]))
+
+
+@login_required
+def delete_review(request, review_id):
+    """Delete a user's review"""
+    review = get_object_or_404(Review, pk=review_id)
+
+    if request.user == review.user or request.user.is_superuser:
+        review.delete()
+        review.product.save()  # Recalculate the product's rating
+        messages.success(request, "Review deleted.")
+    else:
+        messages.error(request, "You cannot delete this review.")
+    
+    return redirect(reverse('product_detail', args=[review.product.id]))
+
+
+@login_required
+def edit_review(request, review_id):
+    """ Edit a review for a product """
+    review = get_object_or_404(Review, pk=review_id)
+
+    if request.user != review.user and not request.user.is_superuser:
+        return HttpResponseForbidden("You are not allowed to edit this review.")
+
+    if request.method == 'POST':
+        form = ReviewForm(request.POST, instance=review)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your review has been updated.")
+            return redirect('product_detail', product_id=review.product.id)
+    else:
+        form = ReviewForm(instance=review)
+
+    return render(request, 'products/edit_review.html', {
+        'form': form,
+        'review': review
+    })
