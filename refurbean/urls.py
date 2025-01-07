@@ -26,6 +26,7 @@ urlpatterns = [
     path('checkout/', include('checkout.urls')),
     path('bag/', include('bag.urls')),
     path('profile/', include('profiles.urls')),
+    path('about/', include('about.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler404 = 'refurbean.views.handler404'

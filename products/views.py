@@ -84,20 +84,37 @@ def add_product(request):
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
-            product = form.save()
+            # Save the product instance but don't commit it yet (to avoid FK errors)
+            product = form.save(commit=False)
+
+            # Save the product to generate the primary key (id)
+            product.save()
+
+            # Now that the product is saved, assign foreign key fields (category, device_type)
+            if 'category' in form.cleaned_data:
+                product.category = form.cleaned_data['category']
+            if 'device_type' in form.cleaned_data:
+                product.device_type = form.cleaned_data['device_type']
+
+            # Save again to commit foreign key relationships
+            product.save()
+
             messages.success(request, 'Successfully added product!')
             return redirect(reverse('product_detail', args=[product.id]))
         else:
             messages.error(request, 'Failed to add product. Please ensure the form is valid.')
     else:
         form = ProductForm()
-        
+
     template = 'products/add_product.html'
     context = {
         'form': form,
     }
 
     return render(request, template, context)
+
+
+
 
 
 @login_required

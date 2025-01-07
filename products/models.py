@@ -37,8 +37,11 @@ class Product(models.Model):
         return None 
 
     def save(self, *args, **kwargs):
-        self.rating = self.calculate_rating()
-        super().save(*args, **kwargs)
+        if not self.pk: 
+            super(Product, self).save(*args, **kwargs) 
+        
+        self.rating = self.calculate_rating() 
+        super(Product, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name
