@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'django_countries',
     'profiles',
     'about',
+    'wishlist',
     'storages',
 ]
 

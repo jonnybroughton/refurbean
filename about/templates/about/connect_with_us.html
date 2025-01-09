@@ -12,6 +12,12 @@
 {% block content %}
 <div class="overlay"></div>
 <div class="container">
+    <a href="{% url 'products' %}" class="btn btn-outline-black rounded-0 mt-3 keep-shopping">
+        <span class="icon">
+            <i class="fas fa-chevron-left"></i>
+        </span>
+        <span class="text-uppercase">Keep Shopping</span>
+    </a>
     <img src="{{ MEDIA_URL }}bean-at-desk.jpg" alt="Bean sat typing on a laptop" class="img-fluid" 
          style="max-height: 300px !important; width: 100% !important; margin-bottom: 20px;">
     
@@ -30,7 +36,7 @@
             
             <!-- Mailchimp signup form -->
             <div id="mc_embed_shell">
-                <link href="//cdn-images.mailchimp.com/embedcode/classic-061523.css" rel="stylesheet" type="text/css">
+                
                 <style>
                     #mc_embed_signup {
                         background: #fff;

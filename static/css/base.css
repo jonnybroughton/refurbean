@@ -9,8 +9,6 @@ body {
     height: 100vh;
     color: #555;
     font-family: 'Electrolize';
-    padding-top: 0;
-    margin:0;
 }
 
 .base-header {
@@ -22,6 +20,24 @@ body {
     right: 0;
 }
 
+.product-container{
+    margin-top: 60px;
+}
+
+@media (max-width: 420px) {
+    .product-container {
+        margin-top: 100px;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1020px) {
+    .product-container {
+        margin-top: 75px;
+    }
+}
+
+
+
 .tagline {
     color: white;
     text-shadow: 
@@ -32,13 +48,25 @@ body {
     font-size: 2rem;
 }
 
+
 .tagline-container {
     position: fixed; 
+    height:100vh-164px;
+    margin-top:164px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
     z-index: 9999;
+}
+
+.keep-shopping{
+    margin-bottom: 20px;
+}
+
+.container{
+    padding-top:50px;
+    padding-bottom: 50px;
 }
 
 .icon {
@@ -349,4 +377,11 @@ a.category-badge > span.badge:hover {
     clear: left;
     font: 14px Helvetica, Arial, sans-serif;
     width: 600px;
+}
+
+
+.wishlist-image{
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
 }
