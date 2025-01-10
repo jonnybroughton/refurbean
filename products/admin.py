@@ -5,7 +5,6 @@ from .models import Product, Category, DeviceType, Review
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = (
-        'sku',
         'name',
         'category',
         'device_type', 
@@ -14,7 +13,6 @@ class ProductAdmin(admin.ModelAdmin):
         'image',
     )
 
-    ordering = ('sku',)
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = (

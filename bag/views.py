@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from products.models import Product
-from wishlist.models import Wishlist  # This imports Wishlist for accessing wishlist items
+from wishlist.models import Wishlist
 
 def view_bag(request):
     """ A view that renders the bag contents page """

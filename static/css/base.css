@@ -166,6 +166,10 @@ a.category-badge > span.badge:hover {
     cursor: pointer;
 }
 
+.about-us-text{
+    text-align: center;
+}
+
 /* 404 CSS */
 
 .not-found-message {
