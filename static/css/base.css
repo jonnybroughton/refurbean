@@ -166,12 +166,20 @@ a.category-badge > span.badge:hover {
     cursor: pointer;
 }
 
+.connect-with-us{
+    text-align: center;
+}
+
 .about-us-text{
     text-align: center;
 }
 
 .product-sort{
     margin-top: 180px;
+}
+
+.review-form{
+    margin-bottom: 20px;
 }
 
 /* 404 CSS */

@@ -30,6 +30,10 @@
     right: .5rem;
 }
 
+.facebook-link{
+  font-size:larger;
+}
+
 #payment-form .form-control,
 #card-element {
     color: #000;

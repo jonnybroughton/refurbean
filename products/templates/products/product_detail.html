@@ -31,15 +31,28 @@
                     <p class="mb-0">{{ product.name }}</p>
 
                     <!-- Quality and Price -->
-                    <form class="form" action="{% url 'add_to_bag' product.id %}" method="POST">
-                        {% csrf_token %}
-                        <label for="quality">Quality:</label>
-                        <select id="quality" name="quality" onchange="updatePrice(this.value)" required>
+                    <label for="quality">Quality:</label>
+                    <select id="quality" name="quality" onchange="updatePrice(this.value)" required>
+                        {% if product.price %}
                             <option value="fair" data-price="{{ product.price }}">Fair - ${{ product.price }}</option>
+                        {% endif %}
+                        {% if product.price_good %}
                             <option value="good" data-price="{{ product.price_good }}">Good - ${{ product.price_good }}</option>
+                        {% endif %}
+                        {% if product.price_amazing %}
                             <option value="amazing" data-price="{{ product.price_amazing }}">Amazing - ${{ product.price_amazing }}</option>
-                        </select>
-                        <p class="lead mb-0 text-left font-weight-bold" id="price">${{ product.price }}</p>
+                        {% endif %}
+                    </select>
+                    <p class="lead mb-0 text-left font-weight-bold" id="price">
+                        {% if product.price %}
+                            ${{ product.price }}
+                        {% elif product.price_good %}
+                            ${{ product.price_good }}
+                        {% elif product.price_amazing %}
+                            ${{ product.price_amazing }}
+                        {% endif %}
+                    </p>
+                    
 
                         <!-- JavaScript to dynamically update price -->
                         <script>
@@ -159,7 +172,7 @@
         <div class="row">
             <div class="col-12">
                 <h4>Write a Review</h4>
-                <form method="POST" action="{% url 'add_review' product.id %}">
+                <form method="POST" action="{% url 'add_review' product.id %}" class="review-form">
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="title">Title</label>
@@ -197,4 +210,11 @@
 {% block postloadjs %}
 {{ block.super }}
 {% include 'products/includes/quantity_input_script.html' %}
+<script>
+    function updatePrice(quality) {
+    const selectedOption = document.querySelector(`#quality option[value="${quality}"]`);
+    const price = selectedOption ? selectedOption.getAttribute('data-price') : '0.00';
+    document.getElementById('price').textContent = `$${price}`;
+}
+</script>
 {% endblock %}
