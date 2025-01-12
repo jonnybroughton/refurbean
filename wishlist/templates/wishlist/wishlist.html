@@ -30,8 +30,23 @@
                             <h5 class="card-title">{{ item.product.name }}</h5>
                             <p class="card-text">${{ item.product.price }}</p>
                             <a href="{% url 'product_detail' item.product.id %}" class="btn btn-primary">View Product</a>
-                            <a href="{% url 'add_to_bag_from_wishlist' item.product.id %}" class="btn btn-success">Add to Bag</a>
-                            <a href="{% url 'remove_from_wishlist' item.id %}" class="btn btn-danger">Remove from Wishlist</a>
+                            
+                            <!-- Add to Bag Form with Quality Selector -->
+                            <form method="POST" action="{% url 'add_to_bag_from_wishlist' item.product.id %}">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="quality_{{ item.product.id }}">Quality:</label>
+                                    <select name="quality" id="quality_{{ item.product.id }}" class="form-control" required>
+                                        <option value="fair" data-price="{{ item.product.price }}">Fair - ${{ item.product.price }}</option>
+                                        <option value="good" data-price="{{ item.product.price_good }}">Good - ${{ item.product.price_good }}</option>
+                                        <option value="amazing" data-price="{{ item.product.price_amazing }}">Amazing - ${{ item.product.price_amazing }}</option>
+                                    </select>
+                                </div>
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn-success">Add to Bag</button>
+                            </form>
+
+                            <a href="{% url 'remove_from_wishlist' item.id %}" class="btn btn-danger mt-2">Remove from Wishlist</a>
                         </div>
                     </div>
                 </div>

@@ -193,7 +193,7 @@ def delete_review(request, review_id):
 
     if request.user == review.user or request.user.is_superuser:
         review.delete()
-        review.product.save()  # Recalculate the product's rating
+        review.product.save()
         messages.success(request, "Review deleted.")
     else:
         messages.error(request, "You cannot delete this review.")

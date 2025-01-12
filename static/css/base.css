@@ -170,6 +170,10 @@ a.category-badge > span.badge:hover {
     text-align: center;
 }
 
+.product-sort{
+    margin-top: 180px;
+}
+
 /* 404 CSS */
 
 .not-found-message {

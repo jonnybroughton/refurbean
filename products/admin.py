@@ -9,6 +9,8 @@ class ProductAdmin(admin.ModelAdmin):
         'category',
         'device_type', 
         'price',
+        'price_good', 
+        'price_amazing',
         'rating',
         'image',
     )

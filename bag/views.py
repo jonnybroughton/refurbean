@@ -1,75 +1,99 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from products.models import Product
 from wishlist.models import Wishlist
 
 def view_bag(request):
-    """ A view that renders the bag contents page """
     return render(request, 'bag/bag.html')
 
 def add_to_bag(request, item_id):
-    """ Add a quantity of the specified product to the shopping bag """
     product = get_object_or_404(Product, pk=item_id)
     quantity = int(request.POST.get('quantity'))
+    quality = request.POST.get('quality')
     redirect_url = request.POST.get('redirect_url')
     bag = request.session.get('bag', {})
-
-    if item_id in list(bag.keys()):
-        messages.success(request, f'Updated {product.name} quantity to {bag[item_id]}')
-        bag[item_id] += quantity
+    price = None
+    if quality == 'fair':
+        price = product.price
+    elif quality == 'good':
+        price = product.price_good
+    elif quality == 'amazing':
+        price = product.price_amazing
+    if price is None:
+        messages.error(request, f"Price for quality '{quality}' is not available for this product.")
+        return redirect(redirect_url)
+    item_key = f"{item_id}_{quality}"
+    if item_key in bag:
+        bag[item_key]['quantity'] += quantity
     else:
-        bag[item_id] = quantity
-        messages.success(request, f'Added {product.name} to your bag')
-
+        bag[item_key] = {'quantity': quantity, 'quality': quality, 'price': str(price)}
     request.session['bag'] = bag
+    messages.success(request, f'Added {product.name} ({quality.capitalize()}) to your bag')
     return redirect(redirect_url)
 
 def adjust_bag(request, item_id):
-    """ Adjust the quantity of the specified product to the specified amount """
-    product = get_object_or_404(Product, pk=item_id)
+    try:
+        product_id, quality = item_id.split('_')
+    except ValueError:
+        messages.error(request, "Invalid item key format.")
+        return redirect('view_bag')
+    product = get_object_or_404(Product, pk=product_id)
     quantity = int(request.POST.get('quantity'))
     bag = request.session.get('bag', {})
-
-    if quantity > 0:
-        bag[item_id] = quantity
-        messages.success(request, f'Updated {product.name} quantity to {bag[item_id]}')
+    item_key = f"{product_id}_{quality}"
+    if item_key in bag:
+        if quantity > 0:
+            bag[item_key]['quantity'] = quantity
+            messages.success(request, f'Updated {product.name} ({quality}) quantity to {quantity}')
+        else:
+            del bag[item_key]
+            messages.success(request, f'Removed {product.name} ({quality}) from your bag')
     else:
-        bag.pop(item_id, None)
-        messages.success(request, f'Removed {product.name} from your bag')
-
+        messages.error(request, f"Could not find {product.name} ({quality}) in your bag.")
     request.session['bag'] = bag
     return redirect('view_bag')
 
 def remove_from_bag(request, item_id):
-    """ Remove the item from the shopping bag """
     try:
-        product = get_object_or_404(Product, pk=item_id)
+        product_id, quality = item_id.split('_')
+        product = get_object_or_404(Product, pk=product_id)
         bag = request.session.get('bag', {})
-        bag.pop(item_id, None)
-        messages.success(request, f'Removed {product.name} from your bag')
-
+        item_key = f"{product_id}_{quality}"
+        if item_key in bag:
+            del bag[item_key]
+            messages.success(request, f'Removed {product.name} ({quality}) from your bag')
+        else:
+            messages.error(request, f"Item {product.name} ({quality}) not found in your bag")
         request.session['bag'] = bag
         return HttpResponse(status=200)
     except Exception as e:
-        messages.success(request, f'Error removing item: {e}')
+        messages.error(request, f'Error removing item: {e}')
         return HttpResponse(status=500)
 
 @login_required
 def add_to_bag_from_wishlist(request, product_id):
-    """ Add a product from the wishlist to the shopping bag """
-    product = get_object_or_404(Product, pk=product_id)
-    bag = request.session.get('bag', {})
-
-    # Add the product to the shopping bag (default quantity = 1)
-    quantity = 1
-
-    if product_id in bag:
-        bag[product_id] += quantity
-        messages.success(request, f'Updated {product.name} quantity to {bag[product_id]} in your bag.')
-    else:
-        bag[product_id] = quantity
-        messages.success(request, f'Added {product.name} to your bag.')
-
-    request.session['bag'] = bag
-    return redirect('view_bag')  # Redirect to the bag page after adding
+    if request.method == 'POST':
+        product = get_object_or_404(Product, pk=product_id)
+        bag = request.session.get('bag', {})
+        quality = request.POST.get('quality')
+        quantity = int(request.POST.get('quantity', 1))
+        price = None
+        if quality == 'fair':
+            price = product.price
+        elif quality == 'good' and hasattr(product, 'price_good'):
+            price = product.price_good
+        elif quality == 'amazing' and hasattr(product, 'price_amazing'):
+            price = product.price_amazing
+        if price is None:
+            messages.error(request, f"Price for quality '{quality}' is not available for this product.")
+            return redirect('wishlist')
+        item_key = f"{product_id}_{quality}"
+        if item_key in bag:
+            bag[item_key]['quantity'] += quantity
+        else:
+            bag[item_key] = {'quantity': quantity, 'quality': quality, 'price': str(price)}
+        request.session['bag'] = bag
+        messages.success(request, f'{product.name} ({quality.capitalize()}) has been added to your bag!')
+    return redirect('wishlist')

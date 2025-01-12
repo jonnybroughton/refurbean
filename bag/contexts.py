@@ -4,20 +4,31 @@ from django.shortcuts import get_object_or_404
 from products.models import Product
 
 def bag_contents(request):
-
     bag_items = []
     total = 0
     product_count = 0
     bag = request.session.get('bag', {})
 
-    for item_id, quantity in bag.items():
-        product = get_object_or_404(Product, pk=item_id)
-        total += quantity * product.price
+    for item_key, item_data in bag.items():
+        try:
+            product_id, quality = item_key.split('_')
+        except ValueError:
+            raise ValueError(f"Invalid bag key format: {item_key}. Expected 'product_id_quality'.")
+
+        product = get_object_or_404(Product, pk=product_id)
+
+        quantity = item_data['quantity']
+        price = Decimal(str(item_data['price']))
+
+        total += quantity * price
         product_count += quantity
         bag_items.append({
-            'item_id': item_id,
-            'quantity': quantity,
+            'item_id': item_key, 
             'product': product,
+            'quality': quality,
+            'quantity': quantity,
+            'price': price,
+            'subtotal': quantity * price,
         })
 
     if total < settings.FREE_DELIVERY_THRESHOLD:
@@ -26,9 +37,9 @@ def bag_contents(request):
     else:
         delivery = 0
         free_delivery_delta = 0
-    
+
     grand_total = delivery + total
-    
+
     context = {
         'bag_items': bag_items,
         'total': total,
