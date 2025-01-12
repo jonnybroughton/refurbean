@@ -84,19 +84,15 @@ def add_product(request):
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
-            # Save the product instance but don't commit it yet (to avoid FK errors)
             product = form.save(commit=False)
 
-            # Save the product to generate the primary key (id)
             product.save()
 
-            # Now that the product is saved, assign foreign key fields (category, device_type)
             if 'category' in form.cleaned_data:
                 product.category = form.cleaned_data['category']
             if 'device_type' in form.cleaned_data:
                 product.device_type = form.cleaned_data['device_type']
 
-            # Save again to commit foreign key relationships
             product.save()
 
             messages.success(request, 'Successfully added product!')
@@ -163,7 +159,6 @@ def delete_product(request, product_id):
 
 @login_required
 def add_review(request, product_id):
-    """Add a review for a product"""
     product = get_object_or_404(Product, pk=product_id)
 
     if request.method == 'POST':
@@ -181,9 +176,11 @@ def add_review(request, product_id):
             defaults={'title': title, 'content': content, 'rating': rating}
         )
 
-        product.save()  # Recalculate the product's rating
+        product.rating = product.calculate_rating()
+        product.save()  
         messages.success(request, "Your review has been saved.")
         return redirect(reverse('product_detail', args=[product_id]))
+
 
 
 @login_required
@@ -203,7 +200,6 @@ def delete_review(request, review_id):
 
 @login_required
 def edit_review(request, review_id):
-    """ Edit a review for a product """
     review = get_object_or_404(Review, pk=review_id)
 
     if request.user != review.user and not request.user.is_superuser:
@@ -213,12 +209,12 @@ def edit_review(request, review_id):
         form = ReviewForm(request.POST, instance=review)
         if form.is_valid():
             form.save()
+            review.product.rating = review.product.calculate_rating()
+            review.product.save()
             messages.success(request, "Your review has been updated.")
             return redirect('product_detail', product_id=review.product.id)
     else:
         form = ReviewForm(instance=review)
 
-    return render(request, 'products/edit_review.html', {
-        'form': form,
-        'review': review
-    })
+    return render(request, 'products/edit_review.html', {'form': form, 'review': review})
+
