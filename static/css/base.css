@@ -173,14 +173,9 @@ a.category-badge > span.badge:hover {
 /* 404 CSS */
 
 .not-found-message {
-    font-size: vw;
+    font-size: 75px;
     font-weight: bold;
-    color: #fff;
-    text-shadow: 
-        2px 2px 0px black,  
-        -2px -2px 0px black,
-        2px -2px 0px black,
-        -2px 2px 0px black;
+    color: black;
     text-align: center;  
     line-height: 1.2;
     margin-top: 50px;
@@ -395,14 +390,14 @@ a.category-badge > span.badge:hover {
 
 @media (max-width: 768px) {
     .not-found-message {
-        font-size: 8vw;
+        font-size: 75px;
     }
 }
 
 
 @media (max-width: 480px) {
     .not-found-message {
-        font-size: 4vw;  
+        font-size: 75px;  
     }
 }
 

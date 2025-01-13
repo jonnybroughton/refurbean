@@ -1,4 +1,6 @@
-from django.shortcuts import render, redirect, reverse, get_object_or_404, HttpResponse
+from django.shortcuts import (
+    render, redirect, reverse, get_object_or_404, HttpResponse
+)
 from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.conf import settings
@@ -10,7 +12,8 @@ from profiles.models import UserProfile
 from bag.contexts import bag_contents
 import stripe
 import json
-from decimal import Decimal 
+from decimal import Decimal
+
 
 @require_POST
 def cache_checkout_data(request):
@@ -24,8 +27,13 @@ def cache_checkout_data(request):
         })
         return HttpResponse(status=200)
     except Exception as e:
-        messages.error(request, 'Sorry, your payment cannot be processed right now. Please try again later.')
+        messages.error(
+            request,
+            'Sorry, your payment cannot be '
+            'processed right now. Please try again later.'
+        )
         return HttpResponse(content=e, status=400)
+
 
 def checkout(request):
     stripe_public_key = settings.STRIPE_PUBLIC_KEY
@@ -33,7 +41,6 @@ def checkout(request):
 
     if request.method == 'POST':
         bag = request.session.get('bag', {})
-
         form_data = {
             'full_name': request.POST['full_name'],
             'email': request.POST['email'],
@@ -57,41 +64,47 @@ def checkout(request):
                 try:
                     item_id, quality = item_key.split('_')
                     product = Product.objects.get(id=item_id)
-                    print("this is quality in checkout view ",quality)
+                    print("this is quality in checkout view ", quality)
 
-                    if quality == 'fair':
-                        item_price = product.price
-                    elif quality == 'good':
-                        item_price = product.price_good
-                    elif quality == 'amazing':
-                        item_price = product.price_amazing
-                    else:
-                        item_price = product.price
+                    item_price = (
+                        product.price if quality == 'fair' else
+                        product.price_good if quality == 'good' else
+                        product.price_amazing if quality == 'amazing' else
+                        product.price
+                    )
 
                     order_line_item = OrderLineItem(
                         order=order,
                         product=product,
                         quantity=item_data['quantity'],
                         quality=quality,
-                        price=item_price,  
+                        price=item_price,
                     )
                     order_line_item.save()
                 except Product.DoesNotExist:
                     messages.error(
                         request,
-                        "One of the products in your bag wasn't found in our database. Please call us for assistance!"
+                        "One of the products in your bag"
+                        "wasn't found in our database. "
+                        "Please call us for assistance!"
                     )
                     order.delete()
                     return redirect(reverse('view_bag'))
 
             request.session['save_info'] = 'save-info' in request.POST
-            return redirect(reverse('checkout_success', args=[order.order_number]))
+            return redirect(reverse('checkout_success',
+                            args=[order.order_number]))
         else:
-            messages.error(request, 'There was an error with your form. Please double check your information.')
+            messages.error(
+                request,
+                'There was an error with your form. '
+                'Please double check your information.'
+            )
     else:
         bag = request.session.get('bag', {})
         if not bag:
-            messages.error(request, "There's nothing in your bag at the moment")
+            messages.error(request, "There's nothing in your "
+                           "bag at the moment")
             return redirect(reverse('products'))
 
         current_bag = bag_contents(request)
@@ -123,7 +136,10 @@ def checkout(request):
             order_form = OrderForm()
 
     if not stripe_public_key:
-        messages.warning(request, 'Stripe public key is missing. Set it in your environment')
+        messages.warning(
+            request,
+            'Stripe public key is missing. Set it in your environment'
+        )
 
     template = 'checkout/checkout.html'
     context = {
@@ -158,31 +174,15 @@ def checkout_success(request, order_number):
             if user_profile_form.is_valid():
                 user_profile_form.save()
 
-    # for item in order.lineitems.all():
-    #     if hasattr(item, 'quality'):
-    #         if item.quality == 'fair':
-    #             item_price = item.product.price
-    #         elif item.quality == 'good':
-    #             item_price = item.product.price_good
-    #         elif item.quality == 'amazing':
-    #             item_price = item.product.price_amazing
-    #         else:
-    #             item_price = item.product.price  
-            
-    #         item.price = item_price
-    #         item.save()
-
-    #         print(f"Item: {item.product.name}, Quality: {item.quality}, Calculated Price: {item_price}")
-
-    messages.success(request, f'Order successfully processed! Your order number is {order_number}. A confirmation email will be sent to {order.email}.')
+    messages.success(
+        request,
+        f'Order successfully processed! Your order number is {order_number}. '
+        f'A confirmation email will be sent to {order.email}.'
+    )
 
     if 'bag' in request.session:
         del request.session['bag']
 
-    # print('ORDER ITEM: ', order.lineitems.product.price)
     template = 'checkout/checkout_success.html'
-    context = {
-        'order': order,
-    }
-
+    context = {'order': order}
     return render(request, template, context)

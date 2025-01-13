@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from products.models import Product
 import logging
 
+
 def bag_contents(request):
     bag_items = []
     total = 0
@@ -14,7 +15,10 @@ def bag_contents(request):
         try:
             product_id, quality = item_key.split('_')
         except ValueError:
-            raise ValueError(f"Invalid bag key format: {item_key}. Expected 'product_id_quality'.")
+            raise ValueError(
+                              f"Invalid bag key format: {item_key}. "
+                              f"Expected 'product_id_quality'."
+                            )
 
         product = get_object_or_404(Product, pk=product_id)
 
@@ -24,7 +28,7 @@ def bag_contents(request):
         total += quantity * price
         product_count += quantity
         bag_items.append({
-            'item_id': item_key, 
+            'item_id': item_key,
             'product': product,
             'quality': quality,
             'quantity': quantity,

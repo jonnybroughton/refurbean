@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib import messages
 from django.db.models import Q
+from django.http import HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
 from .forms import ProductForm, ReviewForm
 from .models import Product, Category, DeviceType, Review
@@ -51,7 +52,7 @@ def all_products(request):
 
     context = {
         'products': products,
-        'search_term': query, 
+        'search_term': query,
         'categories': categories,
         'current_sorting': sort,
         'category_filter': category_filter,
@@ -78,14 +79,16 @@ def add_product(request):
     """ Add a product to the store """
 
     if not request.user.is_superuser:
-        messages.error(request, 'Sorry, only store owners can do that.')
+        messages.error(
+            request,
+            'Sorry, only store owners can do that.'
+        )
         return redirect(reverse('home'))
 
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
             product = form.save(commit=False)
-
             product.save()
 
             if 'category' in form.cleaned_data:
@@ -95,10 +98,16 @@ def add_product(request):
 
             product.save()
 
-            messages.success(request, 'Successfully added product!')
+            messages.success(
+                request,
+                'Successfully added product!'
+            )
             return redirect(reverse('product_detail', args=[product.id]))
         else:
-            messages.error(request, 'Failed to add product. Please ensure the form is valid.')
+            messages.error(
+                request,
+                'Failed to add product. Please ensure the form is valid.'
+            )
     else:
         form = ProductForm()
 
@@ -110,15 +119,15 @@ def add_product(request):
     return render(request, template, context)
 
 
-
-
-
 @login_required
 def edit_product(request, product_id):
     """ Edit a product in the store """
 
     if not request.user.is_superuser:
-        messages.error(request, 'Sorry, only store owners can do that.')
+        messages.error(
+            request,
+            'Sorry, only store owners can do that.'
+        )
         return redirect(reverse('home'))
 
     product = get_object_or_404(Product, pk=product_id)
@@ -126,13 +135,22 @@ def edit_product(request, product_id):
         form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Successfully updated product!')
+            messages.success(
+                request,
+                'Successfully updated product!'
+            )
             return redirect(reverse('product_detail', args=[product.id]))
         else:
-            messages.error(request, 'Failed to update product. Please ensure the form is valid.')
+            messages.error(
+                request,
+                'Failed to update product. Please ensure the form is valid.'
+            )
     else:
         form = ProductForm(instance=product)
-        messages.info(request, f'You are editing {product.name}')
+        messages.info(
+            request,
+            f'You are editing {product.name}'
+        )
 
     template = 'products/edit_product.html'
     context = {
@@ -148,7 +166,10 @@ def delete_product(request, product_id):
     """ Delete a product from the store """
 
     if not request.user.is_superuser:
-        messages.error(request, 'Sorry, only store owners can do that.')
+        messages.error(
+            request,
+            'Sorry, only store owners can do that.'
+        )
         return redirect(reverse('home'))
 
     product = get_object_or_404(Product, pk=product_id)
@@ -165,7 +186,7 @@ def add_review(request, product_id):
         title = request.POST.get('title')
         content = request.POST.get('content')
         rating = int(request.POST.get('rating'))
-        
+
         if not 1 <= rating <= 5:
             messages.error(request, "Rating must be between 1 and 5.")
             return redirect(reverse('product_detail', args=[product_id]))
@@ -173,14 +194,17 @@ def add_review(request, product_id):
         review, created = Review.objects.update_or_create(
             product=product,
             user=request.user,
-            defaults={'title': title, 'content': content, 'rating': rating}
+            defaults={
+                'title': title,
+                'content': content,
+                'rating': rating
+            }
         )
 
         product.rating = product.calculate_rating()
-        product.save()  
+        product.save()
         messages.success(request, "Your review has been saved.")
         return redirect(reverse('product_detail', args=[product_id]))
-
 
 
 @login_required
@@ -194,7 +218,7 @@ def delete_review(request, review_id):
         messages.success(request, "Review deleted.")
     else:
         messages.error(request, "You cannot delete this review.")
-    
+
     return redirect(reverse('product_detail', args=[review.product.id]))
 
 
@@ -203,7 +227,9 @@ def edit_review(request, review_id):
     review = get_object_or_404(Review, pk=review_id)
 
     if request.user != review.user and not request.user.is_superuser:
-        return HttpResponseForbidden("You are not allowed to edit this review.")
+        return HttpResponseForbidden(
+            "You are not allowed to edit this review."
+        )
 
     if request.method == 'POST':
         form = ReviewForm(request.POST, instance=review)
@@ -216,5 +242,8 @@ def edit_review(request, review_id):
     else:
         form = ReviewForm(instance=review)
 
-    return render(request, 'products/edit_review.html', {'form': form, 'review': review})
-
+    return render(
+        request,
+        'products/edit_review.html',
+        {'form': form, 'review': review}
+    )
