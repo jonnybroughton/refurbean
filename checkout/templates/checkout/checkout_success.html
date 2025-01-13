@@ -64,6 +64,16 @@
                                 {{ item.product.name }}
                             </p>
                         </div>
+                        {% if item.quality == 'fair' %}
+                        <h1>FAIR</h1>
+                        {% elif item.quality == 'good' %}
+                        <h1>GOOD</h1>
+                        {% elif item.quality == 'amazing' %}
+                        <h1>AMAZING</h1>
+                        {% else %}
+                        <h1>NO QUALITY</h1>
+                        {% endif %}
+
                         <div class="col-12 col-md-8 text-md-right">
                             <p class="small mb-0">{{ item.quantity }} @ ${{ item.product.price }} each</p>
                         </div>

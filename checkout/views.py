@@ -52,20 +52,35 @@ def checkout(request):
             order.stripe_pid = pid
             order.original_bag = json.dumps(bag)
             order.save()
+
             for item_key, item_data in bag.items():
                 try:
                     item_id, quality = item_key.split('_')
                     product = Product.objects.get(id=item_id)
+                    print("this is quality in checkout view ",quality)
+
+                    if quality == 'fair':
+                        item_price = product.price
+                    elif quality == 'good':
+                        item_price = product.price_good
+                    elif quality == 'amazing':
+                        item_price = product.price_amazing
+                    else:
+                        item_price = product.price
+
                     order_line_item = OrderLineItem(
                         order=order,
                         product=product,
                         quantity=item_data['quantity'],
                         quality=quality,
-                        price=Decimal(str(item_data['price'])),
+                        price=item_price,  
                     )
                     order_line_item.save()
                 except Product.DoesNotExist:
-                    messages.error(request, "One of the products in your bag wasn't found in our database. Please call us for assistance!")
+                    messages.error(
+                        request,
+                        "One of the products in your bag wasn't found in our database. Please call us for assistance!"
+                    )
                     order.delete()
                     return redirect(reverse('view_bag'))
 
@@ -119,6 +134,7 @@ def checkout(request):
 
     return render(request, template, context)
 
+
 def checkout_success(request, order_number):
     save_info = request.session.get('save_info')
     order = get_object_or_404(Order, order_number=order_number)
@@ -142,11 +158,28 @@ def checkout_success(request, order_number):
             if user_profile_form.is_valid():
                 user_profile_form.save()
 
+    # for item in order.lineitems.all():
+    #     if hasattr(item, 'quality'):
+    #         if item.quality == 'fair':
+    #             item_price = item.product.price
+    #         elif item.quality == 'good':
+    #             item_price = item.product.price_good
+    #         elif item.quality == 'amazing':
+    #             item_price = item.product.price_amazing
+    #         else:
+    #             item_price = item.product.price  
+            
+    #         item.price = item_price
+    #         item.save()
+
+    #         print(f"Item: {item.product.name}, Quality: {item.quality}, Calculated Price: {item_price}")
+
     messages.success(request, f'Order successfully processed! Your order number is {order_number}. A confirmation email will be sent to {order.email}.')
 
     if 'bag' in request.session:
         del request.session['bag']
 
+    # print('ORDER ITEM: ', order.lineitems.product.price)
     template = 'checkout/checkout_success.html'
     context = {
         'order': order,
