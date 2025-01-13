@@ -30,34 +30,37 @@
                 <div class="product-details-container mb-5 mt-md-5">
                     <p class="mb-0">{{ product.name }}</p>
 
-                    <!-- Quality and Price -->
-                    <label for="quality">Quality:</label>
-                    <select id="quality" name="quality" onchange="updatePrice(this.value)" required>
-                        {% if product.price %}
-                            <option value="fair" data-price="{{ product.price }}">Fair - ${{ product.price }}</option>
-                        {% endif %}
-                        {% if product.price_good %}
-                            <option value="good" data-price="{{ product.price_good }}">Good - ${{ product.price_good }}</option>
-                        {% endif %}
-                        {% if product.price_amazing %}
-                            <option value="amazing" data-price="{{ product.price_amazing }}">Amazing - ${{ product.price_amazing }}</option>
-                        {% endif %}
-                    </select>
-                    <p class="lead mb-0 text-left font-weight-bold" id="price">
-                        {% if product.price %}
-                            ${{ product.price }}
-                        {% elif product.price_good %}
-                            ${{ product.price_good }}
-                        {% elif product.price_amazing %}
-                            ${{ product.price_amazing }}
-                        {% endif %}
-                    </p>
-                    
+                    <!-- Add to Bag Form -->
+                    <form method="POST" action="{% url 'add_to_bag' product.id %}">
+                        {% csrf_token %}
+                        <!-- Quality and Price -->
+                        <label for="quality">Quality:</label>
+                        <select id="quality" name="quality" onchange="updatePrice(this.value)" required>
+                            {% if product.price %}
+                                <option value="fair" data-price="{{ product.price }}">Fair - ${{ product.price }}</option>
+                            {% endif %}
+                            {% if product.price_good %}
+                                <option value="good" data-price="{{ product.price_good }}">Good - ${{ product.price_good }}</option>
+                            {% endif %}
+                            {% if product.price_amazing %}
+                                <option value="amazing" data-price="{{ product.price_amazing }}">Amazing - ${{ product.price_amazing }}</option>
+                            {% endif %}
+                        </select>
+                        <p class="lead mb-0 text-left font-weight-bold" id="price">
+                            {% if product.price %}
+                                ${{ product.price }}
+                            {% elif product.price_good %}
+                                ${{ product.price_good }}
+                            {% elif product.price_amazing %}
+                                ${{ product.price_amazing }}
+                            {% endif %}
+                        </p>
 
                         <!-- JavaScript to dynamically update price -->
                         <script>
                             function updatePrice(quality) {
-                                var price = document.querySelector(`#quality option[value="${quality}"]`).getAttribute('data-price');
+                                const selectedOption = document.querySelector(`#quality option[value="${quality}"]`);
+                                const price = selectedOption ? selectedOption.getAttribute('data-price') : '0.00';
                                 document.getElementById('price').textContent = `$${price}`;
                             }
                         </script>
@@ -212,9 +215,9 @@
 {% include 'products/includes/quantity_input_script.html' %}
 <script>
     function updatePrice(quality) {
-    const selectedOption = document.querySelector(`#quality option[value="${quality}"]`);
-    const price = selectedOption ? selectedOption.getAttribute('data-price') : '0.00';
-    document.getElementById('price').textContent = `$${price}`;
-}
+        const selectedOption = document.querySelector(`#quality option[value="${quality}"]`);
+        const price = selectedOption ? selectedOption.getAttribute('data-price') : '0.00';
+        document.getElementById('price').textContent = `$${price}`;
+    }
 </script>
 {% endblock %}
