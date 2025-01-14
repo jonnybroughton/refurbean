@@ -35,10 +35,11 @@
                                 <div class="form-group">
                                     <label for="quality_{{ item.product.id }}">Quality:</label>
                                     <select name="quality" id="quality_{{ item.product.id }}" class="form-control" required>
+                                        <option value="" selected disabled>-- Select Quality --</option>
                                         <option value="fair" data-price="{{ item.product.price }}">Fair - ${{ item.product.price }}</option>
                                         <option value="good" data-price="{{ item.product.price_good }}">Good - ${{ item.product.price_good }}</option>
                                         <option value="amazing" data-price="{{ item.product.price_amazing }}">Amazing - ${{ item.product.price_amazing }}</option>
-                                    </select>
+                                    </select>     
                                 </div>
                                 <input type="hidden" name="quantity" value="1">
                                 <button type="submit" class="btn btn-success">Add to Bag</button>
