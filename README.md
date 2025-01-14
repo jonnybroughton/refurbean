@@ -251,5 +251,60 @@ This story is in progress, as this would be the next feature to be implemented o
 
 **Errors during updates trigger an error notification.**
 
+### Wishlist Functionality
 
+**As a customer, I can add items to a wishlist so that I can save products I am interested in purchasing later.**
+
+**Acceptance Criteria:**
+
+**Users can add/remove items from their wishlist.**
+
+**Wishlist items are saved in the user's account.**
+
+**Users can move wishlist items to the cart.**
+
+### Product Reviews
+
+**As a customer, I can write and view reviews for products so that I can make informed purchasing decisions.**
+
+**Acceptance Criteria:**
+
+**Customers can leave reviews with ratings (1-5 stars).**
+
+**Reviews are displayed on the product page.**
+
+**Admins can moderate reviews for inappropriate content.**
+
+## Testing
+
+### W3C Validator & CSS Validator
+
+I performed testing on all of my HTML pages seen on the site. Due to Django's templating language, I had to use View Page Source and copy that instead of the files themselves. I have since smoothed out the errors on the pages themselves, however, as you can see in this screenshot below, there are some persistent errors that remain. From what I understand they spring up from having both the mobile header and the header for the regular site, and it causes issues as the validator can't see that they're not connected, so for right now, I have smoothed over errors in the rest of the HTMl but left these persistent ones for now.
+
+![screenshot](static/screenshots/w3chtml.png)
+
+The CSS Validator passes
+
+![screenshot](static/screenshots/cssvalidator.png)
+
+### JSHint and CI Python Linter
+
+The JavaScript files pass the JSHint Validator
+
+All Python files have been brought to PEP8 standards using the CI Python linter
+
+### Manual Website Testing
+
+#### First Run - Anonymous User
+
+I began manually testing the website as a user who is not logged in and using incognito mode.
+
+
+### Lighthouse Testing
+
+![screenshot](static/screenshots/test-scores.png)
+
+From these Lighthouse scores, we can see that the page scores highly, although the performance is slightly slow. A lot of this appears to be the result of render blocking resources such as Bootstrap, AWS, MailChimp and Google Fonts. In the future, I would potentially look at how best to optimise these resources so that they can load faster, or if I had the resources to turn this into something bigger, look at setting up some of my own infrastructure to automate emails etc. 
+
+We do appear to score highly on SEO rankings, due in part to our robots.txt file and sitemap.xml. The site is very accessible, the only mark down is from not having th
 
