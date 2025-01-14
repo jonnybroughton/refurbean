@@ -11,7 +11,7 @@ The website features a user-friendly interface, comprehensive product categorisa
 
 ![screenshot](static/screenshots/navbar.png)
 
-This is the main naviation bar for the site. It features the site's logo/name, various product headings for different types of devices on the site, and a heading for the About Us line of pages. It also features a My Account button where users can either register for an account if they don't have one and log in if they do. Logged in users can also find their wishlist here for products they one day want to purchase. here, site administrators can also add products using a form, instead of having to do it through the admin interface. The bag is also located here, where users can see what items they will be checking out with. Finally, we have the search bar in the top middle, which can be used to search for keywords to help users find the product they want effortlessly. Worth a mention is the Free Delivery banner, which may convince users to spend slightly more in order to get free shipping.
+This is the main navigation bar for the site. It features the site's logo/name, various product headings for different types of devices on the site, and a heading for the About Us line of pages. It also features a My Account button where users can either register for an account if they don't have one and log in if they do. Logged in users can also find their wishlist here for products they one day want to purchase. here, site administrators can also add products using a form, instead of having to do it through the admin interface. The bag is also located here, where users can see what items they will be checking out with. Finally, we have the search bar in the top middle, which can be used to search for keywords to help users find the product they want effortlessly. Worth a mention is the Free Delivery banner, which may convince users to spend slightly more in order to get free shipping.
 
 ![screenshot](static/screenshots/bean-mascot.png)
 
@@ -275,6 +275,25 @@ This story is in progress, as this would be the next feature to be implemented o
 
 **Admins can moderate reviews for inappropriate content.**
 
+## Models
+
+### UserProfile
+![screenshot](static/screenshots/userprofile-model.png)
+### Review
+![screenshot](static/screenshots/review-model.png)
+### Order
+![screenshot](static/screenshots/order-model.png)
+### Wishlist
+![screenshot](static/screenshots/wishlist-model.png)
+### Category
+![screenshot](static/screenshots/category-model.png)
+### Product
+![screenshot](static/screenshots/product-model.png)
+### DeviceType
+![screenshot](static/screenshots/device-type-model.png)
+### OrderLineItem
+![screenshot](static/screenshots/orderlineitem.png)
+
 ## Testing
 
 ### W3C Validator & CSS Validator
@@ -297,14 +316,63 @@ All Python files have been brought to PEP8 standards using the CI Python linter
 
 #### First Run - Anonymous User
 
-I began manually testing the website as a user who is not logged in and using incognito mode.
+I began manually testing the website as a user who is not logged in and using incognito mode. I did this to see how the site behaves when the user has never vistited before or made an account. From the index page, every navbar link appears to work correctly, as well as the Shop Now button. Every link on the Products page appears to load corrctly, and the sorting function also works. As I am not signed in, when I view products, I am able to read reviews, but unable to make my own unless i make an account, and similarly I cannot add items to my wishlist. All links prompting me to sign in work correctly. However, despite not being singed in, I am still able to generate a temporary email and put through and the payment goes through successfully on Stripe, along with my order success page and I get the email come through as well. I am also similarly prompted to log in or create an account if I want to save my order details. All of the About Us pages work, including the links to external sites, which open in a new tab. If I search in the browser to try to reach urls I don't have access to, such as /wishlist/, I get asked to sign in.
+![screenshot](static/screenshots/stripe-result.png)
+
+#### Second Run - Signed in standard user
+
+This time, I came out of incognito mode and performed my test in standard Chrome. Every link seems to work as normal. When I am viewing the product details page, I can now fill out the review form. Once I have made a review, it affects the total rating applied to the product. If I see a review that was not left by the account I'm logged in as, I cannot alter it or delete it, but when I add my review to it, it does affect the score if it was higher or lower than the other rating. I can add products to my wishlist now that I am logged in, and if I want, I can choose a quality and add it straight to the bag, and then go through the bag to pay for it in the checkout. The quantity selector cannot go below 1, and it both adds and subtracts correctly, as well as being able to update the figure in the bag, and remove it from the bag all ok if I desire to. The checkout goes through without incedent and I receive the email confirmation. As I'm signed in, but only as a standard user, I wanted to see what would happen if I tried to access a link I'm not supposed to, like products/add/ , but thankfully I'm informed that only store owners can do that.
+
+#### Final Run - Signed in as superuser
+
+Now that I'm the superuser, I have access to the entire site. All the links appear to be functioning correctly, and when I look on the product page, I am presented with options to edit and delete products, and the same goes for the product detail page. When I go to edit a product, I am informed that I am editing a product. I can access the product management page through the link in the My Profile section and add a product, and products are also able to be deleted once made. Additionally, I am able to edit and delete reviews of any standard user on the site without having to use the admin portal which is important in case someone leaves a nasty message!
 
 
 ### Lighthouse Testing
 
 ![screenshot](static/screenshots/test-scores.png)
 
-From these Lighthouse scores, we can see that the page scores highly, although the performance is slightly slow. A lot of this appears to be the result of render blocking resources such as Bootstrap, AWS, MailChimp and Google Fonts. In the future, I would potentially look at how best to optimise these resources so that they can load faster, or if I had the resources to turn this into something bigger, look at setting up some of my own infrastructure to automate emails etc. 
+From these Lighthouse scores, we can see that the page scores highly, although the performance is slightly slow. A lot of this appears to be the result of render blocking resources such as Bootstrap, AWS, MailChimp and Google Fonts. In the future, I would potentially look at how best to optimise these resources so that they can load faster, or if I had the resources to turn this into something bigger, look at setting up some of my own infrastructure to automate emails etc. I'd also like to look into what I could do to serve images better, as there may be some high resolution ones that take a while to load. 
 
-We do appear to score highly on SEO rankings, due in part to our robots.txt file and sitemap.xml. The site is very accessible, the only mark down is from not having th
+We do appear to score highly on SEO rankings, due in part to our robots.txt file and sitemap.xml. The site is very accessible, the only mark down is from not having the Bag, account and Search buttons in a menu or ul element, but as it remains that way from the original tutorial, I will leave it for now but think about a future fix.
 
+
+
+## Credit
+
+All media content throughout the site was either AI generated or from resources with Creative Commons licenses such as wikipedia. Some images were from users from the free stock photo platform Pexels, and some photos came from [Trusted Reviews](https://www.trustedreviews.com/) who provide the license if you give them credit. The Trusted Reviews photos were converted from .avif to .jpg.
+
+To help me get started, I borrowed some of the source code from the Boutique Ado walkthroughs. Evidence of this can be found in:
+
+main-nav.html
+
+mobile-top-header.html
+
+profile.html
+
+products.html
+
+product_detail.html
+
+index.html
+
+checkout.html
+
+bag.html
+
+
+
+
+
+## Deployment
+The steps I used to deploy my project are as follows:
+
+1. Ready code for deployment by changing debug to False, git commit and push.
+2. Sign in to Heroku.
+3. Create a new app.
+4. Choose a unique name for your app and select your region (e.g., United States or Europe).
+5. Connect your GitHub account to Heroku and select the repository you want to deploy.
+6. Under the Settings tab, scroll down to Config Vars. Here, you can add important environment variables like SECRET_KEY, DATABASE_URL, etc. Click Reveal Config Vars and enter your key-value pairs.
+7. If you're not using automatic deploys, scroll down to the Manual Deploy section.
+Choose the branch to deploy from (e.g., main) and click Deploy Branch.
+8. Once deployment has finished, open the app.
