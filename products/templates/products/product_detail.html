@@ -20,7 +20,7 @@
                             <img class="card-img-top img-fluid" src="{{ product.image.url }}" alt="{{ product.name }}">
                         </a>
                     {% else %}
-                        <a href="">
+                        <a href="#">
                             <img class="card-img-top img-fluid" src="{{ MEDIA_URL }}noimage.png" alt="{{ product.name }}">
                         </a>
                     {% endif %}
@@ -36,6 +36,7 @@
                         <!-- Quality and Price -->
                         <label for="quality">Quality:</label>
                         <select id="quality" name="quality" onchange="updatePrice(this.value)" required>
+                            <option value="" selected disabled>-- Select Quality --</option>
                             {% if product.price %}
                                 <option value="fair" data-price="{{ product.price }}">Fair - ${{ product.price }}</option>
                             {% endif %}
@@ -56,48 +57,27 @@
                             {% endif %}
                         </p>
 
-                        <!-- JavaScript to dynamically update price -->
-                        <script>
-                            function updatePrice(quality) {
-                                const selectedOption = document.querySelector(`#quality option[value="${quality}"]`);
-                                const price = selectedOption ? selectedOption.getAttribute('data-price') : '0.00';
-                                document.getElementById('price').textContent = `$${price}`;
-                            }
-                        </script>
-
-                        <label for="quantity" class="mt-3">Quantity:</label>
+                        <label for="id_qty_{{ product.id }}" class="mt-3">Quantity:</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <button class="decrement-qty btn btn-black rounded-0" 
-                                    type="button" onclick="decrementQuantity()">
-                                    <span class="icon">
-                                        <i class="fas fa-minus"></i>
-                                    </span>
+                                <button class="decrement-qty btn btn-black rounded-0" type="button">
+                                    <span class="icon"><i class="fas fa-minus"></i></span>
                                 </button>
                             </div>
-                            <input class="form-control qty_input" type="number"
-                                name="quantity" value="1" min="1" max="99"
-                                id="id_qty_{{ product.id }}">
+                            <input class="form-control qty_input" type="number" name="quantity" value="1" min="1" max="99" id="id_qty_{{ product.id }}">
                             <div class="input-group-append">
-                                <button class="increment-qty btn btn-black rounded-0"
-                                    type="button">
-                                    <span class="icon">
-                                        <i class="fas fa-plus"></i>
-                                    </span>
+                                <button class="increment-qty btn btn-black rounded-0" type="button">
+                                    <span class="icon"><i class="fas fa-plus"></i></span>
                                 </button>
                             </div>
                         </div>
 
                         <div class="col-12 mt-4">
                             <a href="{% url 'products' %}" class="btn btn-outline-black rounded-0">
-                                <span class="icon">
-                                    <i class="fas fa-chevron-left"></i>
-                                </span>
+                                <span class="icon"><i class="fas fa-chevron-left"></i></span>
                                 <span class="text-uppercase">Keep Shopping</span>
                             </a>
-                            <button type="submit" class="btn btn-black rounded-0 text-uppercase">
-                                Add to Bag
-                            </button>
+                            <button type="submit" class="btn btn-black rounded-0 text-uppercase">Add to Bag</button>
                         </div>
                         <input type="hidden" name="redirect_url" value="{{ request.path }}">
                     </form>
@@ -107,9 +87,7 @@
                         <form action="{% url 'add_to_wishlist' product.id %}" method="POST" class="mt-3">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-outline-primary rounded-0 text-uppercase">
-                                <span class="icon">
-                                    <i class="fas fa-heart"></i>
-                                </span>
+                                <span class="icon"><i class="fas fa-heart"></i></span>
                                 Add to Wishlist
                             </button>
                         </form>
@@ -172,43 +150,44 @@
         </div>
 
         {% if user.is_authenticated %}
-        <div class="row">
-            <div class="col-12">
-                <h4>Write a Review</h4>
-                <form method="POST" action="{% url 'add_review' product.id %}" class="review-form">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="title">Title</label>
-                        <input type="text" class="form-control" id="title" name="title" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="rating">Rating</label>
-                        <select class="form-control" id="rating" name="rating" required>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="content">Review</label>
-                        <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit Review</button>
-                </form>
+            <div class="row">
+                <div class="col-12">
+                    <h4>Write a Review</h4>
+                    <form method="POST" action="{% url 'add_review' product.id %}" class="review-form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="title">Title</label>
+                            <input type="text" class="form-control" id="title" name="title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="rating">Rating</label>
+                            <select class="form-control" id="rating" name="rating" required>
+                                <option value="" selected disabled>-- Select Rating --</option> <!-- Placeholder Option -->
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="content">Review</label>
+                            <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit Review</button>
+                    </form>
+                </div>
             </div>
-        </div>
-        {% else %}
-        <div class="row">
-            <div class="col-12">
-                <p><a href="{% url 'account_login' %}">Log in</a> to leave a review.</p>
+            {% else %}
+            <div class="row">
+                <div class="col-12">
+                    <p><a href="{% url 'account_login' %}">Log in</a> to leave a review.</p>
+                </div>
             </div>
-        </div>
-        {% endif %}
+            {% endif %}
+
     </div>
 {% endblock %}
-
 
 {% block postloadjs %}
 {{ block.super }}

@@ -39,7 +39,7 @@ body {
 
 .tagline-container {
     position: fixed; 
-    height:100vh-164px;
+    height: calc(100vh - 164px);
     margin-top:164px;
     top: 50%;
     left: 50%;
